@@ -1,7 +1,7 @@
 # Project 3 
 
 ------------------------------------------------------------------
-Project Aim : 
+Project Aim :
 ------------------------------------------------------------------
 1. Implement face dectection using MTCNN.
 2. Create CNN to predict gender using face ROI.
@@ -12,5 +12,5 @@ Setup :
 ## To setup this project on your local machine follow below steps.
 - Clone this project.
 - Create a virtual environment.(optional but recommended)
-- run pip install --r requirements.txt ( this will install all the dependices for the project).
+- run pip install -r requirements.txt ( this will install all the dependices for the project).
 
