@@ -1,7 +1,6 @@
-# This is my report file for this project
+# Report file for this project
 ------------------------------------------------------------
-Report 1:        Date - 5/6/2020
-------------------------------------------------------------
+## Report 1:(Date - 5/6/2020)
 ## This report is for 2nd presentation of the project which was held on 4/6/2020
 ------------------------------------------------------------
 
