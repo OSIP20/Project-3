@@ -1,16 +1,21 @@
+
+# To run this program, type : 'python BasicObjectTracking.py' in cmd, after moving into file directory.
+#-----------------------------------------------------------#
+
 # importing the required libraries
 import cv2
 
+# Function for creating the tracker based on the users choice.
 def ask_for_tracker():
     print("Welcome to Object Tracking ! What tracker API would you like to use?")
     print("Enter 0 for BOOSTING:")
     print("Enter 1 for MIL:")
-    print("Enter 2 for MIL: ")
+    print("Enter 2 for KCF: ")
     print("Enter 3 for TLD: ")
     print("Enter 4 for MEDIANFLOW:")
     print("Enter 5 for MOSSE: ")
     choice = input("Please select your tracker: ")
-
+ 
     if choice == "0":
         tracker = cv2.TrackerBoosting_create()
     if choice == "1":
@@ -26,6 +31,7 @@ def ask_for_tracker():
 
     return tracker
 
+# --------------- Main section ----------------------#
 tracker = ask_for_tracker()
 tracker_name = str(tracker).split()[0][1:]
 
@@ -73,5 +79,6 @@ while True:
     if k == ord("q"):
         break
 
+# release all the pointers and close all the windows
 cap.release()
 cv2.destroyAllWindows()
