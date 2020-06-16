@@ -65,8 +65,8 @@ while True:
     for(objectID, centroid) in objects.items():
         # draw both ID and centroid of the detected object on the output frame
         text = "ID {}".format(objectID)
-        cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,255,0), 2)
-        cv2.circle(frame, (centroid[0], centroid[1], 4, (0, 255, 0), -1))
+        cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.circle(frame, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
 
     # show the output frame
     cv2.imshow("Frame", frame)
