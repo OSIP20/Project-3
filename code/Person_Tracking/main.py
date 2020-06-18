@@ -1,3 +1,5 @@
+# to run this file : python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input input/example_02.mp4 --output output/example_02_output_dlib.avi
+
 # Drive file for person tracking
 
 # importing libraries
@@ -18,6 +20,7 @@ ap.add_argument("-m", "--model", required=True, help = " path to .caffemodel fil
 ap.add_argument("-i", "--input", type=str, help="path to optional input video file")
 ap.add_argument("-o", "--output", type=str, help="path to optional output video file")
 ap.add_argument("-c", "--confidence", type=float, default=0.4, help="minimum probability to filter weak detections")
+ap.add_argument("-t","--tracker",type=str,default = "dlib" ,help="tracker type dlib or MOSSE. Defult is dlib")
 ap.add_argument("-s", "--skip-frames", type=int, default=30, help="# of skip frames between detections")
 args = vars(ap.parse_args())
 
@@ -49,6 +52,9 @@ writer = None
 W = None
 H = None
 
+# set tracker name to dispay on video
+trackerName = "Dlib correlation"
+
 # initialize the centroid tracker
 ct = CentroidTracker(maxDisappeared =40, maxDistance = 50)
 
@@ -78,7 +84,7 @@ while True:
 
     # resize the frame to 500 pixels
     frame = imutils.resize(frame, width = 500)
-    # frame = imutils.rotate_bound(frame, 90)
+    frame = imutils.rotate_bound(frame, 90)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
 
@@ -128,14 +134,16 @@ while True:
                 box = detections[0, 0, i, 3:7] * np.array([W, H, W, H])
                 (startX, startY, endX, endY) = box.astype("int")
 
-                # initialize the KCF tracker
-                # tracker = cv2.TrackerKCF_create()
-                # rect = tracker.init(frame,(startX, startY, endX, endY))
-
-                # initialize dlib correlation tracker
-                tracker = dlib.correlation_tracker()
-                rect = dlib.rectangle(int(startX), int(startY), int(endX), int(endY))
-                tracker.start_track(rgb, rect)
+                if args["tracker"] == "mosse":
+                    # initialize the mosse tracker
+                    trackerName = "OpenCV MOSSE"
+                    tracker = cv2.TrackerMOSSE_create()
+                    rect = tracker.init(frame,(startX, startY, endX, endY))
+                else:
+                    # initialize dlib correlation tracker
+                    tracker = dlib.correlation_tracker()
+                    rect = dlib.rectangle(int(startX), int(startY), int(endX), int(endY))
+                    tracker.start_track(rgb, rect)
 
                 # add the trakcer to the list of trackers, so that it can be utilized
                 # during skiped frames
@@ -150,30 +158,28 @@ while True:
             status = "Tracking"
 
             # update the tracker and grab the updated position
-            
-            # for openCV tracker
-            # success, pos = tracker.update(frame)
-
-            #  # convert the pos into tuple of 4 intergers
-            # (x,y,w,h) = tuple(map(int,pos))
-
-            # startX = x
-            # startY = y
-            # endX = x+w
-            # endY = y+h
-    
-            # for dlib tracker
-            tracker.update(rgb)
-            pos = tracker.get_position()
-
-            # unpack the position object
-            startX = int(pos.left())
-            startY = int(pos.top())
-            endX = int(pos.right())
-            endY = int(pos.bottom())
+            if args["tracker"] == "mosse":
+                # for openCV tracker
+                success, pos = tracker.update(frame)
+                # convert the pos into tuple of 4 intergers
+                (x,y,w,h) = tuple(map(int,pos))
+                startX = x
+                startY = y
+                endX = x+w
+                endY = y+h
+            else:
+                # for dlib tracker
+                tracker.update(rgb)
+                pos = tracker.get_position()
+                # unpack the position object
+                startX = int(pos.left())
+                startY = int(pos.top())
+                endX = int(pos.right())
+                endY = int(pos.bottom())
 
             # add the bounding box coordinates to the rectangles list
             rects.append((startX, startY, endX, endY))
+            # draw the bounding boxes on the frame
             cv2.rectangle(frame,(startX,startY),(endX,endY),(0,255,0),2)
 
     # draeing a horizontal line in the center of the frame, once an object 
@@ -231,7 +237,8 @@ while True:
     info = [
         ("Up", totalUp),
         ("Down", totalDown),
-        ("Status", status)
+        ("Status", status),
+        ("Tracker", trackerName)
     ]
 
     # print the info in the frame
