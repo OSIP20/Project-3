@@ -1,0 +1,8 @@
+MTCNN .py link - https://towardsdatascience.com/face-detection-neural-network-structure-257b8f6f85d1
+
+MTCNN LayerFactory link - https://github.com/ipazc/mtcnn/blob/master/mtcnn/layer_factory.py
+
+
+References -
+1)  https://towardsdatascience.com/how-does-a-face-detection-program-work-using-neural-networks-17896df8e6ff
+2)  https://machinelearningmastery.com/how-to-perform-face-detection-with-classical-and-deep-learning-methods-in-python-with-keras/
