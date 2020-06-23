@@ -56,7 +56,11 @@ class PersonTracking:
 
         # load the serialized model for detection from disk
         print("[INFO] loading model...")
-        self.net = cv2.dnn.readNetFromCaffe(prototxt,model)
+        try :
+            self.net = cv2.dnn.readNetFromCaffe(prototxt,model)
+        except Exception as e:
+            print("[INFO] Unable to load model...please check path")
+            print(e)
 
     '''
     Function to read the video file 
@@ -76,17 +80,23 @@ class PersonTracking:
     Function to loop through each frame of video
     '''
     def loopFrames(self):
+
         while True:
             # read frame from video
             self.frame = self.vs.read()
-            self.frame = self.frame[1] if self.ip is not None else self.frame
+            self.frame = self.frame[1]
+
+            # check for empty video
+            if self.frame is None:
+                print("[INFO] Video not available...")
+                break 
 
             # if a video file is used and frame == none, it means video has ended
             if self.ip is not None and self.frame is None:
                 break
 
             # resize the frame to 500 pixels
-            dim = (500, int(self.frame.shape[0] * 500/float(self.frame.shape[1])))
+            dim = (500, int(self.frame.shape[0] * 500 / float(self.frame.shape[1])))
             self.frame = cv2.resize(self.frame, dim, interpolation=cv2.INTER_AREA)
             # self.frame = imutils.rotate_bound(self.frame, 90)
             self.rgb = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
@@ -127,18 +137,15 @@ class PersonTracking:
             # close if q is pressed
             key = cv2.waitKey(1) & 0xFF
             if key == ord("q"):
+                print("[INFO] algo stopped...")
                 break
         
         # check if writer pointer should be released
         if self.writer is not None:
             self.writer.release()
 
-        # if a webcam is used, stop the webcam
-        if self.ip is None:
-            self.vs.stop()
-        # otherwise, release the video file pointer
-        else:
-            self.vs.release()
+        # release the video file
+        self.vs.release()
 
         # close any open windows
         cv2.destroyAllWindows()
@@ -291,13 +298,24 @@ class PersonTracking:
         # increment the total number of frames processed thus far
         # and update the FPS counter
         self.totalFrames += 1
-
-
+        self.fps.update()
+       
     
     '''
     Function to execute complete algorithm
     '''
     def run(self):
+        # read the video
         self.readVideo()
+        # start the fps counter
+        self.fps = FPS().start()
+        print("[INFO] running algo...")
+        print("[INFO] press 'q' to stop...")
+        # loop through each frame
         self.loopFrames()
+        # stop the fps counter
+        self.fps.stop()
+        print("[INFO] elasped time: {:.2f} sec".format(self.fps.elapsed()))
+        print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
+
 
