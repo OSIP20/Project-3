@@ -11,7 +11,9 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["--prototxt", "${workspaceFolder}\\code\\Person_Tracking\\mobilenet_ssd\\MobileNetSSD_deploy.prototxt", "--model", "${workspaceFolder}\\code\\Person_Tracking\\mobilenet_ssd\\MobileNetSSD_deploy.caffemodel", "--input", "${workspaceFolder}\\code\\Person_Tracking\\videos\\example_02.mp4", "--output", "${workspaceFolder}\\code\\Person_Tracking\\output\\example_02_output_dlib.avi"]
+            "args": ["--prototxt", "${workspaceFolder}\\code\\Person_Tracking\\mobilenet_ssd\\MobileNetSSD_deploy.prototxt", "--model", "${workspaceFolder}\\code\\Person_Tracking\\mobilenet_ssd\\MobileNetSSD_deploy.caffemodel", "--input", "${workspaceFolder}\\code\\Person_Tracking\\input\\example_02.mp4", "--output", "${workspaceFolder}\\code\\Person_Tracking\\output\\example_02_output_dlib.avi"]
         }
     ]
 }
+
+// "--input", "${workspaceFolder}\\code\\Person_Tracking\\videos\\example_02.mp4"

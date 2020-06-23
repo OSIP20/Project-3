@@ -1,3 +1,12 @@
+'''
+Description : Main file to run the tracking algorithm 
+Author : Sarang Chouguley 
+Team no: 3
+Project no : 3
+Command to run this file: 'python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input input/example_02.mp4 --output path_to_output_file'
+Type : 'python main.py --help' to see all the arguments
+'''
+
 from classes.tracker import PersonTracking
 import argparse
 
@@ -14,5 +23,5 @@ args = vars(ap.parse_args())
 
 if __name__ == "__main__":
 
-    pt = PersonTracking(args["prototxt"], args["model"],args["input"],args["output"], args["confidence"], args["tracker"], args["skip_frames"])
+    pt = PersonTracking(prototxt = args["prototxt"], model = args["model"],ip = args["input"],op = args["output"], confidence = args["confidence"], tracker = args["tracker"], skip_frame = args["skip_frames"])
     pt.run()

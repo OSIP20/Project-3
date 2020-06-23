@@ -1,7 +1,7 @@
-# to run this file : python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input input/example_02.mp4 --output output/example_02_output_dlib.avi
-
-# Drive file for person tracking
-
+''' 
+Description : file to test the tracking algorithm
+To run this file : python main.py --prototxt mobilenet_ssd/MobileNetSSD_deploy.prototxt --model mobilenet_ssd/MobileNetSSD_deploy.caffemodel --input input/example_02.mp4 --output output/example_02_output_dlib.avi
+'''
 # importing libraries
 import cv2
 import numpy as np
@@ -81,7 +81,7 @@ while True:
     dim = (500, int(frame.shape[0] * 500/float(frame.shape[1])))
     frame = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
     # rotate the frame by 90 degree
-    frame = imutils.rotate_bound(frame, 90)
+    # frame = imutils.rotate_bound(frame, 90)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     # if the frame dimensions are empty then set them

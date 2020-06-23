@@ -2,12 +2,12 @@
 Team no: 3
 Project no: 3
 Author: Sarang Chouguley
+Description : Class containing definition of Person Tracking Algorithm
 '''
 
 import cv2
 import numpy as np
 import argparse
-# import imutils
 import dlib
 from .centroidtracker import CentroidTracker
 from .trackableobject import TrackableObject
@@ -39,9 +39,10 @@ class PersonTracking:
         self.W = None # width of video
         self.H = None # height of video
         self.tracker_name = tracker # set tracker type
-        self.t_name = None
+        self.t_name = None # name of tracker to be displayed
+        self.trackableObjects = {} # dict of available trackedObjects
         self.trackers = [] # list to store trackers for each detected person
-        self.trackableObjects = {} # dictionary to store trackable objects
+        trackableObjects = {} # dictionary to store trackable objects
         self.totalFrames = 0 # initialize total number of frames processed, so that detection can be done after n frames
         self.totalDown = 0 # number of person went up
         self.totalUp = 0 # number of person went down
@@ -59,26 +60,25 @@ class PersonTracking:
 
     '''
     Function to read the video file 
-    Arguments : 1. video file
     '''
     def readVideo(self):
         # read from webcam if no file provided
         if self.ip == None:
             print("[INFO] starting video stream...")
-            vs = cv2.VideoCapture(0)
+            self.vs = cv2.VideoCapture(0)
         # else read from the file
         else:
             print("[INFO] loading video file...")
-            vs = cv2.VideoCapture(self.ip)
-        return vs
+            self.vs = cv2.VideoCapture(self.ip)
+        
 
     '''
     Function to loop through each frame of video
     '''
-    def loopFrames(self, vs):
+    def loopFrames(self):
         while True:
             # read frame from video
-            self.frame = vs.read()
+            self.frame = self.vs.read()
             self.frame = self.frame[1] if self.ip is not None else self.frame
 
             # if a video file is used and frame == none, it means video has ended
@@ -115,7 +115,7 @@ class PersonTracking:
                 self.track() # call track function
 
             # call trackCentroid to track centroids
-            self.countPerson()
+            self.countPeople()
 
             # format the output frame
             self.formatFrame()
@@ -145,9 +145,10 @@ class PersonTracking:
 
     '''
     Function to run detection 
-    Arguments: 1. min confidence required for valid detection
     '''
     def detect(self):
+        # initialise trackers list as empty each time detector is called
+        self.trackers = []
         # convert the frame to a blob and run the blob through the network and obtain the detection.
         blob = cv2.dnn.blobFromImage(self.frame, 0.007843, (self.W,self.H), 127.5)
         self.net.setInput(blob)
@@ -161,27 +162,27 @@ class PersonTracking:
             if c > self.confidence:
                 idx = int(detections[0, 0, i, 1]) # extract the index of the class label
                 
-            # if the class lable is not person, ignore it
-            if self.detection_classes[idx] != 'person':
-                continue
+                # if the class lable is not person, ignore it
+                if self.detection_classes[idx] != 'person':
+                    continue
 
-            # compute the (x,y)-coordinates of the bounding boxes for the object
-            box = detections[0, 0, i, 3:7] * np.array([self.W, self.H, self.W, self.H])
-            (startX, startY, endX, endY) = box.astype("int")
+                # compute the (x,y)-coordinates of the bounding boxes for the object
+                box = detections[0, 0, i, 3:7] * np.array([self.W, self.H, self.W, self.H])
+                (startX, startY, endX, endY) = box.astype("int")
 
-            # initialize the mosse tracker  
-            if self.tracker_name == "mosse":
-                self.t_name = "OpenCV MOSSE"
-                tracker = cv2.TrackerMOSSE_create()
-                rect = tracker.init(self.frame,(startX, startY, endX, endY))
-            else: # else initialize dlib correlation tracker
-                self.t_name = "Dlib Correlation"
-                tracker = dlib.correlation_tracker()
-                rect = dlib.rectangle(int(startX), int(startY), int(endX), int(endY))
-                tracker.start_track(self.rgb, rect)
+                # initialize the mosse tracker  
+                if self.tracker_name == "mosse":
+                    self.t_name = "OpenCV MOSSE"
+                    tracker = cv2.TrackerMOSSE_create()
+                    rect = tracker.init(self.frame,(startX, startY, endX, endY))
+                else: # else initialize dlib correlation tracker
+                    self.t_name = "Dlib Correlation"
+                    tracker = dlib.correlation_tracker()
+                    rect = dlib.rectangle(int(startX), int(startY), int(endX), int(endY))
+                    tracker.start_track(self.rgb, rect)
 
-            # add the trakcer to the list of trackers, so that it can be utilized
-            self.trackers.append(tracker)
+                # add the trakcer to the list of trackers, so that it can be utilized
+                self.trackers.append(tracker)
 
     '''
     Function to run tracker
@@ -192,7 +193,7 @@ class PersonTracking:
             # update the tracker and grab the updated position
             if self.tracker_name == "mosse": # check tracker type
                 # for openCV tracker
-                success, pos = tracker.update(frame)
+                success, pos = tracker.update(self.frame)
                 # convert the position into tuple of 4 intergers
                 (x,y,w,h) = tuple(map(int,pos))
                 startX = x
@@ -216,7 +217,7 @@ class PersonTracking:
     '''
     Function to count people
     '''
-    def countPerson(self):
+    def countPeople(self):
         # using the centroid tracker to associate old detected 
         # centroids with newly detected centroids
         objects = self.ct.update(self.rects)
@@ -254,7 +255,7 @@ class PersonTracking:
                         self.totalDown += 1
                         to.counted = True
                     
-            # store the trackable object in the dictionary
+            # update the trackable objects dictionary
             self.trackableObjects[objectID] = to
 
             # draw both the ID of the object and the centroid of the 
@@ -290,11 +291,13 @@ class PersonTracking:
         # increment the total number of frames processed thus far
         # and update the FPS counter
         self.totalFrames += 1
+
+
     
     '''
-    Function to execute complete algoithm
+    Function to execute complete algorithm
     '''
     def run(self):
-        vs = self.readVideo()
-        self.loopFrames(vs)
+        self.readVideo()
+        self.loopFrames()
 
