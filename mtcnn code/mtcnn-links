@@ -1,0 +1,12 @@
+MTCNN links - 
+
+To understand the Neural Network of MTCNN, check out -
+          https://towardsdatascience.com/face-detection-neural-network-structure-257b8f6f85d1
+          
+To understand the program of Face Detection using MTCNN, check out - 
+          https://towardsdatascience.com/how-does-a-face-detection-program-work-using-neural-networks-17896df8e6ff
+          
+All the code for P-Net, R-Net, and O-Net all import a class named “LayerFactory”. 
+In essence, LayerFactory is a class — created by the makers of this model of MTCNN — to generate layers with specific settings.
+Check out the LayerFactory class .py file here - 
+          https://github.com/ipazc/mtcnn/blob/master/mtcnn/layer_factory.py
