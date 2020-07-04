@@ -1,6 +1,6 @@
 '''
 Description: Main file to run the face detection using MTCNN algorithm
-Author: Aayushi Jaiswal
+Author: Aayushi Jaiswal, Sarang Chouguley
 Team no: 3
 Project no: 3
 Command to run this file: ' python main.py -i "input image" '
