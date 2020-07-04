@@ -2,7 +2,7 @@
 Class for Gender Detection
 Group no : 3
 Project no : 3
-Author: Sarang Chouguley
+Author: Sarang Chouguley and Sahil Dandekar
 '''
 #-------------------libraries needed-----------------------#
 import cv2,os

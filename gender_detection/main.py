@@ -2,7 +2,7 @@
 Start file for gender detection
 Group no. : 3
 Project no. : 3
-Author : Sarang Chouguley
+Author : Sarang Chouguley and Sahil Dandekar
 command to run this file : 'python -i "test.jpg" -m "model.h5"'
 '''
 
