@@ -1,7 +1,7 @@
 '''
 Team no: 3
 Project no: 3
-Author: Aayushi Jaiswal
+Author: Aayushi Jaiswal, Sarang Chouguley
 Description: Class containing definition of Face Detection using MTCNN algorithm
 '''
 
