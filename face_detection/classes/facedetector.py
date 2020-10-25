@@ -7,6 +7,7 @@ Description: Class containing definition of Face Detection using MTCNN algorithm
 
 import cv2
 import mtcnn
+from classes.video import FPS
 
 ####### Face Detection Class #######
 
@@ -27,9 +28,10 @@ class FaceDetection:
     '''
     def readInput(self):
         # read the image file if provided or start webcam
-        if self.img is None:
+        if self.img == None:
             print("[INFO]: No input image provided. Starting webcam...")
             self.video = cv2.VideoCapture(0)
+            self.fps = FPS().start()
             while True:
                 self.frame = self.video.read()
                 self.frame = self.frame[1]
@@ -39,10 +41,12 @@ class FaceDetection:
                 if k == ord("q"):
                     break
             self.video.release()
-            cv2.distroyAllWindows()
+            cv2.destroyAllWindows()
+            self.fps.stop()
         else:
             print("[INFO]: Loading image..")
             self.frame = cv2.imread(self.img)
+    
 
     '''
     Function to run detection
@@ -73,7 +77,7 @@ class FaceDetection:
 
         # don't show results if invalid image given
         if self.frame is None : 
-            return
+            return 
         # formatting output frame
         for res in self.results:
             x1, y1, width, height = res['box']
@@ -89,9 +93,12 @@ class FaceDetection:
             cv2.putText(self.frame, f'conf: {confidence:.3f}', (x1, y1), cv2.FONT_ITALIC, 1, (0, 0, 255), 1)
 
             for point in key_points:
-                cv2.circle(self.frame, point, 5, (0, 255, 0), thickness=-1)
-
+                cv2.circle(self.frame, point, 3, (0, 255, 0), thickness=-3)
+            
         cv2.imshow('output', self.frame)
+        self.fps.update()
+        
+        
 
     '''
     Function to run complete program
@@ -101,6 +108,7 @@ class FaceDetection:
         if self.img is None:
             self.readInput()
         else:
+            self.fps = FPS().start()
             # read the input image/webcam video
             self.readInput()
             # detect the faces
@@ -109,7 +117,9 @@ class FaceDetection:
             self.showOutput()
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-            
+            self.fps.stop()
+        print("[INFO] elapsed time: {:.2f} sec".format(self.fps.elapsed()))
+        print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
         
             
             
