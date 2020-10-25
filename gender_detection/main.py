@@ -3,7 +3,7 @@ Start file for gender detection
 Group no. : 3
 Project no. : 3
 Author : Sarang Chouguley and Sahil Dandekar
-command to run this file : 'python -i "test.jpg" -m "model.h5"'
+command to run this file : 'python main.py -i test.jpg -m models/model.h5
 '''
 
 from classes.genderDetect import GenderDetect
